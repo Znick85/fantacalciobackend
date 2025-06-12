@@ -83,14 +83,22 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+        'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'fantacalcio',
-        'USER': 'postgres',
-        'PASSWORD': 'nclzt85',
-        'HOST': 'localhost',
+        'NAME': 'neondb',
+        'USER': 'neondb_owner',
+        'PASSWORD': 'npg_o1JTjv0qYKPy',
+        'HOST': 'ep-frosty-paper-a9uwvr1t.gwc.azure.neon.tech',
         'PORT': '5432',
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'fantacalcio',
+    #     'USER': 'postgres',
+    #     'PASSWORD': 'nclzt85',
+    #     'HOST': 'localhost',
+    #     'PORT': '5432',
+    # }
 }
 
 
