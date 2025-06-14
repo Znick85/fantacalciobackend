@@ -55,6 +55,7 @@ else:
         # Mantieni gli IP statici che usi in locale qui
         '192.168.1.35',
         '47.53.162.51',
+        'fantacalciobackend.onrender.com'
     ]
 
 
