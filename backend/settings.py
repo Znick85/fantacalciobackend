@@ -11,48 +11,23 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-import os  # Importa il modulo os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# Leggi la SECRET_KEY da una variabile d'ambiente in produzione
-# Usa un valore di fallback per lo sviluppo locale
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-haaqk1_%qij100jb9g2ly779z1s7*j+00#d$x@bvf1j6+_9saq') # !!! CAMBIA QUESTA CHIAVE DI FALLBACK PER LA TUA CHIAVE REALE IN LOCALE !!!
+SECRET_KEY = 'django-insecure-haaqk1_%qij100jb9g2ly779z1s7*j+00#d$x@bvf1j6+_9saq'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# Disabilita DEBUG in produzione leggendo da una variabile d'ambiente
-DEBUG = os.environ.get('DEBUG') == 'True'
+DEBUG = True
 
 
-# ALLOWED_HOSTS - Cruciale per il deployment su Render
-# Legge l'hostname esterno fornito da Render e lo aggiunge agli host permessi
-RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS = [
-        RENDER_EXTERNAL_HOSTNAME,
-        # Puoi aggiungere il dominio .onrender.com come fallback se necessario
-        # '.onrender.com', # Esempio: 'il-tuo-servizio.onrender.com'
-        # Aggiungi host per lo sviluppo locale se DEBUG è False
-        'localhost',
-        '127.0.0.1',
-        # Rimuovi o commenta gli IP statici che non sono necessari su Render
-        # '192.168.1.35',
-        # '47.53.162.51',
-    ]
-else:
-    # Configurazione per lo sviluppo locale (quando RENDER_EXTERNAL_HOSTNAME non è impostato)
-    ALLOWED_HOSTS = [
-        'localhost',
-        '127.0.0.1',
-        # Mantieni gli IP statici per lo sviluppo locale se li usi ancora
-        '192.168.1.35',
-        '47.53.162.51',
-    ]
+ALLOWED_HOSTS = ['192.168.1.35', 'localhost', '47.53.162.51','127.0.0.1']
+
 
 
 # Application definition
@@ -77,13 +52,10 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # Assicurati che APPEND_SLASH sia True se rimuovi CommonMiddleware per gestire gli slash
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # Aggiungi il middleware per gli static file in produzione (se necessario)
-    # 'whitenoise.middleware.WhiteNoiseMiddleware', # Esempio se usi whitenoise
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -106,27 +78,28 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
+
 # Database
-# Leggi le credenziali del database da variabili d'ambiente
+# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+
 DATABASES = {
-    'default': {
+        'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'neondb'), # Fallback per locale se necessario
-        'USER': os.environ.get('DB_USER', 'neondb_owner'), # Fallback per locale
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'npg_o1JTjv0qYKPy'), # Fallback per locale
-        'HOST': os.environ.get('DB_HOST', 'ep-frosty-paper-a9uwvr1t.gwc.azure.neon.tech'), # Fallback per locale
-        'PORT': os.environ.get('DB_PORT', '5432'), # Fallback per locale
+        'NAME': 'neondb',
+        'USER': 'neondb_owner',
+        'PASSWORD': 'npg_o1JTjv0qYKPy',
+        'HOST': 'ep-frosty-paper-a9uwvr1t.gwc.azure.neon.tech',
+        'PORT': '5432',
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'fantacalcio',
+    #     'USER': 'postgres',
+    #     'PASSWORD': 'nclzt85',
+    #     'HOST': 'localhost',
+    #     'PORT': '5432',
+    # }
 }
-# Commenta o rimuovi la configurazione locale se usi solo quella remota
-# 'default': {
-#     'ENGINE': 'django.db.backends.postgresql',
-#     'NAME': 'fantacalcio',
-#     'USER': 'postgres',
-#     'PASSWORD': 'nclzt85',
-#     'HOST': 'localhost',
-#     'PORT': '5432',
-# }
 
 
 
@@ -166,10 +139,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-# Potresti dover configurare staticfiles_dirs e static_root per produzione
-# STATICFILES_DIRS = [BASE_DIR / 'static'] # Esempio per static file specifici dell'app
-# STATIC_ROOT = BASE_DIR / 'staticfiles' # Directory dove raccogliere static files per produzione
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -177,11 +146,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Permette le richieste da React
-    'http://130.25.12.189:3000', # Questo IP potrebbe non essere stabile/pubblico
-    "http://192.168.1.35:3000",  # Questo è un IP locale, inutile per il frontend deployato
+    'http://130.25.12.189:3000',
+    "http://192.168.1.35:3000",
     'https://mercatofrontend.netlify.app',
 ]
-# Considera di rimuovere gli IP non pubblici da CORS_ALLOWED_ORIGINS quando deployi il frontend.
 
 from datetime import timedelta
 
@@ -191,7 +159,3 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
 }
-
-# Aggiungi la porta su cui Gunicorn (o il tuo server WSGI) ascolterà.
-# Render imposta la variabile PORT.
-PORT = os.environ.get('PORT')
