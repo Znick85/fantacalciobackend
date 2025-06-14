@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os  # Importa il modulo os
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,10 +25,37 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-haaqk1_%qij100jb9g2ly779z1s7*j+00#d$x@bvf1j6+_9saq'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG') == 'True' # Legge la variabile d'ambiente DEBUG
 
 
-ALLOWED_HOSTS = ['192.168.1.35', 'localhost', '47.53.162.51','127.0.0.1']
+
+# ALLOWED_HOSTS - Cruciale per il deployment su Render
+# In produzione (DEBUG=False), permettiamo l'hostname di Render.
+# In sviluppo (DEBUG=True), usiamo gli host locali.
+ALLOWED_HOSTS = []
+
+if not DEBUG:
+    # Quando non siamo in DEBUG (produzione su Render)
+    # Aggiungiamo il pattern .onrender.com che copre fantacalciobackend.onrender.com
+    ALLOWED_HOSTS.append('.onrender.com')
+    # Potresti anche aggiungere l'hostname specifico se preferisci, ma .onrender.com è sufficiente
+    # render_hostname = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+    # if render_hostname:
+    #     ALLOWED_HOSTS.append(render_hostname)
+
+    # Opzionale: In produzione, potresti voler permettere anche 127.0.0.1 per health check interni
+    # ALLOWED_HOSTS.append('127.0.0.1')
+
+
+else:
+    # Quando siamo in DEBUG (sviluppo locale)
+    ALLOWED_HOSTS = [
+        'localhost',
+        '127.0.0.1',
+        # Mantieni gli IP statici che usi in locale qui
+        '192.168.1.35',
+        '47.53.162.51',
+    ]
 
 
 
@@ -159,3 +188,6 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
 }
+
+# Configura la porta per Gunicorn in produzione
+PORT = os.environ.get('PORT')
