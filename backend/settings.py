@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-haaqk1_%qij100jb9g2ly779z1s7*j+00#d$x@bvf1j6+_9saq
 DEBUG = True
 
 # ALLOWED_HOSTS è una lista di stringhe che definiscono gli host/domini
-ALLOWED_HOSTS = ['192.168.1.35', 'localhost', '47.53.162.51','127.0.0.1']
+ALLOWED_HOSTS = ['192.168.1.35', 'localhost', '47.53.162.51','127.0.0.1','fantacalciobackend.onrender.com',]
 
 
 
