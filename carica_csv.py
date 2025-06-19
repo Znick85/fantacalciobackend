@@ -9,7 +9,7 @@ django.setup()
 
 
 import csv
-from api.models import Giocatore  # Sostituisci 'myapp' con il nome della tua app
+from api.models import Giocatore  
 
 with open("lista_giocatori.csv", newline="", encoding="utf-8") as csvfile:
     reader = csv.DictReader(csvfile,delimiter=';')

@@ -2,6 +2,12 @@ from django.db import models
 from django.conf import settings 
 from django.db.models import JSONField
 
+# Definisce le strutture del database (tabelle) utilizzando l'ORM di Django.
+# Include modelli per le squadre (distinte per serie) e per i giocatori,
+# gestendo le relazioni e i tipi di dati.
+
+
+
 class squadre_serie_A(models.Model): 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,  # Usa il modello utente configurato (default: User)
@@ -36,6 +42,10 @@ class squadre_serie_C(models.Model):
     
     def __str__(self):
         return self.nome
+
+
+#    Modello che rappresenta un calciato.
+#     e collegamenti  alle squadre di Fantacalcio che lo possiedono.
 
 class Giocatore(models.Model):
     PORTIERE = 'Portiere'

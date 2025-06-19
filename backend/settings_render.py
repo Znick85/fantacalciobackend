@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os  # Importa il modulo os
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,17 +25,43 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-haaqk1_%qij100jb9g2ly779z1s7*j+00#d$x@bvf1j6+_9saq'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG') == 'True' # Legge la variabile d'ambiente DEBUG
 
-# ALLOWED_HOSTS è una lista di stringhe che definiscono gli host/domini
-ALLOWED_HOSTS = ['192.168.1.35', 'localhost', '47.53.162.51','127.0.0.1']
+
+
+# ALLOWED_HOSTS - Cruciale per il deployment su Render
+# In produzione (DEBUG=False), permettiamo l'hostname di Render.
+# In sviluppo (DEBUG=True), usiamo gli host locali.
+ALLOWED_HOSTS = []
+
+if not DEBUG:
+    # Quando non siamo in DEBUG (produzione su Render)
+    # Aggiungiamo il pattern .onrender.com che copre fantacalciobackend.onrender.com
+    ALLOWED_HOSTS.append('.onrender.com')
+    # Potresti anche aggiungere l'hostname specifico se preferisci, ma .onrender.com è sufficiente
+    # render_hostname = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+    # if render_hostname:
+    #     ALLOWED_HOSTS.append(render_hostname)
+
+    # Opzionale: In produzione, potresti voler permettere anche 127.0.0.1 per health check interni
+    # ALLOWED_HOSTS.append('127.0.0.1')
+
+
+else:
+    # Quando siamo in DEBUG (sviluppo locale)
+    ALLOWED_HOSTS = [
+        'localhost',
+        '127.0.0.1',
+        # Mantieni gli IP statici che usi in locale qui
+        '192.168.1.35',
+        '47.53.162.51',
+        'fantacalciobackend.onrender.com'
+    ]
 
 
 
 # Application definition
-# INSTALLED_APPS è una lista di stringhe che rappresentano le applicazioni
-# che sono abilitate in questo progetto Django.
-# Ogni stringa si riferisce a una classe di configurazione dell'applicazione.
+
 INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
@@ -49,10 +77,6 @@ INSTALLED_APPS = [
     'corsheaders',
 ]
 
-
-# MIDDLEWARE è una lista di stringhe che definiscono i middleware utilizzati
-# da Django. I middleware sono componenti leggeri che processano le richieste
-# in entrata e le risposte in uscita. L'ordine è importante.
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -64,19 +88,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# ROOT_URLCONF punta al modulo Python dove Django cerca la configurazione degli URL principale.
-
 ROOT_URLCONF = 'backend.urls'
-
-# TEMPLATES configura il motore di template di Django.
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [], 
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
-            'context_processors': [ # Funzioni che aggiungono automaticamente variabili di contesto ai template.
+            'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -86,15 +106,10 @@ TEMPLATES = [
     },
 ]
 
-
-# WSGI_APPLICATION punta al modulo Python che funge da entry point WSGI (Web Server Gateway Interface)
-# per il tuo server web.
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 
 # Database
-# Configurazione del database.
-
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
@@ -106,9 +121,6 @@ DATABASES = {
         'HOST': 'ep-frosty-paper-a9uwvr1t.gwc.azure.neon.tech',
         'PORT': '5432',
     }
-
-    #db locale
-
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
     #     'NAME': 'fantacalcio',
@@ -122,22 +134,20 @@ DATABASES = {
 
 
 # Password validation
-# Impostazioni per la validazione della password utente.
-
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', # Impedisce password simili agli attributi utente.
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',  # Richiede una lunghezza minima della password.
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',  # Controlla che la password non sia tra quelle comuni e facilmente 
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',  # Impedisce password composte interamente da numeri.
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
 
@@ -164,11 +174,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-# CORS_ALLOWED_ORIGINS è una lista di stringhe che definiscono gli origini
-# (schemi, host e porte) da cui le richieste cross-site sono permesse.
-# Essenziale per permettere al frontend (es. React) in esecuzione su un
-# dominio/porta diversa di comunicare con questo backend.
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Permette le richieste da React
     'http://130.25.12.189:3000',
@@ -178,12 +183,12 @@ CORS_ALLOWED_ORIGINS = [
 
 from datetime import timedelta
 
-# Configurazione per django-rest-framework-simplejwt.
-# Definisce le impostazioni per i JSON Web Tokens (JWT).
-
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
 }
+
+# Configura la porta per Gunicorn in produzione
+PORT = os.environ.get('PORT')
