@@ -179,6 +179,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://130.25.12.189:3000',
     "http://192.168.1.35:3000",
     'https://mercatofrontend.netlify.app',
+    'fantacalciobackend.onrender.com',
 ]
 
 from datetime import timedelta
